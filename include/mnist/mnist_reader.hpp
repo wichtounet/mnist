@@ -11,8 +11,6 @@
 #include <vector>
 #include <cstdint>
 
-#include "vector.hpp"
-
 namespace mnist {
 
 inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t position){
