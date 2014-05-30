@@ -20,7 +20,7 @@ inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t positi
     return (value << 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0X0000FF00) | (value >> 24);
 }
 
-template<typename<class> Container = std::vector, typename<class> SubContainer = std::vector, typename PixelType = uint8_t>
+template<template<typename> typename Container = std::vector, template<typename> typename  SubContainer = std::vector, typename PixelType = uint8_t>
 Container<SubContainer<PixelType>> read_mnist_image_file(const std::string& path){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
