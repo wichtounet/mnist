@@ -20,7 +20,7 @@ inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t positi
     return (value << 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0X0000FF00) | (value >> 24);
 }
 
-template<typename Container = std::vector, typename SubContainer = std::vector, typename PixelType = uint8_t>
+template<typename<typename> Container = std::vector, typename<typename> SubContainer = std::vector, typename PixelType = uint8_t>
 Container<SubContainer<PixelType>> read_mnist_image_file(const std::string& path){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
@@ -49,10 +49,7 @@ Container<SubContainer<PixelType>> read_mnist_image_file(const std::string& path
                 std::cout << "The file is not large enough to hold all the data, probably corrupted" << std::endl;
             } else {
                 //Skip the header
-                auto image_buffer = buffer.get() + 16;
-
-                Container<SubContainer<PixelType>> images;
-                images.reserve(count);
+                auto image_buffer = buffer.get() + 16; Container<SubContainer<PixelType>> images; images.reserve(count);
 
                 for(size_t i = 0; i < count; ++i){
                     images.emplace_back(rows * columns);
@@ -71,7 +68,7 @@ Container<SubContainer<PixelType>> read_mnist_image_file(const std::string& path
     return {};
 }
 
-template<typename Container = std::vector>
+template<typename<typename> Container = std::vector>
 Container<uint8_t> read_mnist_label_file(const std::string& path){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
@@ -114,24 +111,24 @@ Container<uint8_t> read_mnist_label_file(const std::string& path){
     return {};
 }
 
-template<typename Container = std::vector, typename SubContainer = std::vector, typename PixelType = uint8_t>
+template<typename<typename> Container = std::vector, typename SubContainer<typename> = std::vector, typename PixelType = uint8_t>
 Container<SubContainer<PixelType>> read_training_images(){
-    return read_mnist_image_file("mnist/train-images-idx3-ubyte");
+    return read_mnist_image_file<Container,SubContainer,PixelType>("mnist/train-images-idx3-ubyte");
 }
 
-template<typename Container = std::vector, typename SubContainer = std::vector, typename PixelType = uint8_t>
+template<typename<typename> Container = std::vector, typename<typename> SubContainer = std::vector, typename PixelType = uint8_t>
 Container<SubContainer<PixelType>> read_test_images(){
-    return read_mnist_image_file("mnist/t10k-images-idx3-ubyte");
+    return read_mnist_image_file<Container,SubContainer,PixelType>("mnist/t10k-images-idx3-ubyte");
 }
 
-template<typename Container = std::vector>
+template<typename<typename> Container = std::vector>
 Container<uint8_t> read_training_labels(){
-    return read_mnist_label_file("mnist/train-labels-idx1-ubyte");
+    return read_mnist_label_file<Container>("mnist/train-labels-idx1-ubyte");
 }
 
-template<typename Container = std::vector>
+template<typename<typename> Container = std::vector>
 Container<uint8_t> read_test_labels(){
-    return read_mnist_label_file("mnist/t10k-labels-idx1-ubyte");
+    return read_mnist_label_file<Container>("mnist/t10k-labels-idx1-ubyte");
 }
 
 }
