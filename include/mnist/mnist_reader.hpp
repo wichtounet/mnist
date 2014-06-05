@@ -13,6 +13,14 @@
 
 namespace mnist {
 
+template<template<typename...> class  Container = std::vector, template<typename> class  SubContainer = std::vector, typename PixelType = uint8_t>
+struct MNIST_dataset {
+    Container<SubContainer<PixelType>> training_images;
+    Container<SubContainer<PixelType>> test_images;
+    Container<uint8_t> training_labels;
+    Container<uint8_t> test_labels;
+};
+
 inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t position){
     auto header = reinterpret_cast<uint32_t*>(buffer.get());
 
@@ -129,6 +137,19 @@ Container<uint8_t> read_training_labels(){
 template<template<typename...> class Container = std::vector>
 Container<uint8_t> read_test_labels(){
     return read_mnist_label_file<Container>("mnist/t10k-labels-idx1-ubyte");
+}
+
+template<template<typename...> class  Container = std::vector, template<typename> class  SubContainer = std::vector, typename PixelType = uint8_t>
+MNIST_dataset read_dataset(){
+    MNIST_dataset dataset;
+
+    dataset.training_images = read_training_images<Container, SubContainer, PixelType>();
+    dataset.training_labels = read_training_labels<Container>();
+
+    dataset.test_images = read_test_images<Container, SubContainer, PixelType>();
+    dataset.test_labels = read_test_labels<Container>();
+
+    return std::move(dataset);
 }
 
 }
