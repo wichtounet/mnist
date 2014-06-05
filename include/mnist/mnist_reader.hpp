@@ -140,8 +140,8 @@ Container<uint8_t> read_test_labels(){
 }
 
 template<template<typename...> class  Container = std::vector, template<typename> class  SubContainer = std::vector, typename PixelType = uint8_t>
-MNIST_dataset read_dataset(){
-    MNIST_dataset dataset;
+MNIST_dataset<Container, SubContainer, PixelType> read_dataset(){
+    MNIST_dataset<Container, SubContainer, PixelType> dataset;
 
     dataset.training_images = read_training_images<Container, SubContainer, PixelType>();
     dataset.training_labels = read_training_labels<Container>();
