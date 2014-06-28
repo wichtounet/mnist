@@ -8,6 +8,8 @@
 #ifndef DBN_MNIST_READER_HPP
 #define DBN_MNIST_READER_HPP
 
+#include <fstream>
+#include <iostream>
 #include <vector>
 #include <cstdint>
 #include <memory>
