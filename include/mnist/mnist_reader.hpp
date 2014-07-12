@@ -5,8 +5,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef DBN_MNIST_READER_HPP
-#define DBN_MNIST_READER_HPP
+#ifndef MNIST_READER_HPP
+#define MNIST_READER_HPP
 
 #include <fstream>
 #include <iostream>
