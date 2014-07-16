@@ -111,7 +111,9 @@ Container<uint8_t> read_mnist_label_file(const std::string& path){
                 std::cout << "The file is not large enough to hold all the data, probably corrupted" << std::endl;
             } else {
                 //Skip the header
-                auto label_buffer = buffer.get() + 8;
+                //Cast to unsigned char is necessary cause signedness of char is
+                //platform-specific
+                auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
 
                 Container<uint8_t> labels(count);
 
