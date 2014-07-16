@@ -60,13 +60,18 @@ Container<SubContainer<PixelType>> read_mnist_image_file(const std::string& path
                 std::cout << "The file is not large enough to hold all the data, probably corrupted" << std::endl;
             } else {
                 //Skip the header
-                auto image_buffer = buffer.get() + 16; Container<SubContainer<PixelType>> images; images.reserve(count);
+                //Cast to unsigned char is necessary cause signedness of char is
+                //platform-specific
+                auto image_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 16);
+
+                Container<SubContainer<PixelType>> images;
+                images.reserve(count);
 
                 for(size_t i = 0; i < count; ++i){
                     images.emplace_back(rows * columns);
 
                     for(size_t j = 0; j < rows * columns; ++j){
-                        uint8_t pixel = *image_buffer++;
+                        auto pixel = *image_buffer++;
                         images[i][j] = static_cast<PixelType>(pixel);
                     }
                 }
