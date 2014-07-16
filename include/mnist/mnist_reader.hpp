@@ -147,7 +147,7 @@ Container<uint8_t> read_test_labels(){
     return read_mnist_label_file<Container>("mnist/t10k-labels-idx1-ubyte");
 }
 
-template<template<typename...> class Container = std::vector, template<typename> class  SubContainer = std::vector, typename PixelType = uint8_t>
+template<template<typename...> class Container = std::vector, template<typename...> class SubContainer = std::vector, typename PixelType = uint8_t>
 MNIST_dataset<Container, SubContainer, PixelType> read_dataset(){
     MNIST_dataset<Container, SubContainer, PixelType> dataset;
 
