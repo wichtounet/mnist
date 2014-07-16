@@ -154,10 +154,10 @@ template<typename Pixel = uint8_t, typename Label = uint8_t>
 MNIST_dataset<Pixel, Label> read_dataset(){
     MNIST_dataset<Pixel, Label> dataset;
 
-    dataset.training_images = read_training_images<Pixel, Label>();
+    dataset.training_images = read_training_images<Pixel>();
     dataset.training_labels = read_training_labels<Label>();
 
-    dataset.test_images = read_test_images<Pixel, Label>();
+    dataset.test_images = read_test_images<Pixel>();
     dataset.test_labels = read_test_labels<Label>();
 
     return std::move(dataset);

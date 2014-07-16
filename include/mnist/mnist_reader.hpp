@@ -154,7 +154,7 @@ template<template<typename...> class Container = std::vector, template<typename.
 MNIST_dataset<Container, Sub, Pixel, Label> read_dataset(){
     MNIST_dataset<Container, Sub, Pixel, Label> dataset;
 
-    dataset.training_images = read_training_images<Container, Sub, Pixel, Label>();
+    dataset.training_images = read_training_images<Container, Sub, Pixel>();
     dataset.training_labels = read_training_labels<Container, Label>();
 
     dataset.test_images = read_test_images<Container, Sub, Pixel>();
