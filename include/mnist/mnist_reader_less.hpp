@@ -163,6 +163,6 @@ MNIST_dataset<Pixel, Label> read_dataset(){
     return std::move(dataset);
 }
 
-}
+} //end of namespace mnist
 
 #endif
