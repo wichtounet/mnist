@@ -103,7 +103,7 @@ Container<Sub<Pixel>> read_mnist_image_file(const std::string& path, std::size_t
 }
 
 template<template<typename...> class  Container = std::vector, typename Label = uint8_t>
-Container<Label> read_mnist_label_file(const std::string& path){
+Container<Label> read_mnist_label_file(const std::string& path, std::size_t limit = 0){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
 
