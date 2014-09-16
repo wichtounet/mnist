@@ -173,7 +173,7 @@ Container<Label> read_test_labels(std::size_t limit = 0){
 }
 
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t, typename Label = uint8_t>
-MNIST_dataset<Container, Sub, Pixel, Label> read_dataset(std::size_t training_limit = 0, std::size_t test_limit){
+MNIST_dataset<Container, Sub, Pixel, Label> read_dataset(std::size_t training_limit = 0, std::size_t test_limit = 0){
     MNIST_dataset<Container, Sub, Pixel, Label> dataset;
 
     dataset.training_images = read_training_images<Container, Sub, Pixel>(training_limit);
