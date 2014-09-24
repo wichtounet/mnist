@@ -133,11 +133,11 @@ Container<Label> read_mnist_label_file(const std::string& path, std::size_t limi
                 //platform-specific
                 auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
 
-                Container<Label> labels(count);
-
                 if(limit > 0 && count > limit){
                     count = limit;
                 }
+
+                Container<Label> labels(count);
 
                 for(size_t i = 0; i < count; ++i){
                     auto label = *label_buffer++;
