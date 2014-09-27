@@ -22,6 +22,20 @@ struct MNIST_dataset {
     Container<Sub<Pixel>> test_images;
     Container<Label> training_labels;
     Container<Label> test_labels;
+
+    void resize_training(std::size_t new_size){
+        if(training_images.size() > new_size){
+            training_images.resize(new_size);
+            training_labels.resize(new_size);
+        }
+    }
+
+    void resize_test(std::size_t new_size){
+        if(test_images.size() > new_size){
+            test_images.resize(new_size);
+            test_labels.resize(new_size);
+        }
+    }
 };
 
 inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t position){
@@ -32,7 +46,7 @@ inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t positi
 }
 
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t>
-Container<Sub<Pixel>> read_mnist_image_file(const std::string& path){
+Container<Sub<Pixel>> read_mnist_image_file(const std::string& path, std::size_t limit = 0){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -64,6 +78,10 @@ Container<Sub<Pixel>> read_mnist_image_file(const std::string& path){
                 //platform-specific
                 auto image_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 16);
 
+                if(limit > 0 && count > limit){
+                    count = limit;
+                }
+
                 Container<Sub<Pixel>> images;
                 images.reserve(count);
 
@@ -85,7 +103,7 @@ Container<Sub<Pixel>> read_mnist_image_file(const std::string& path){
 }
 
 template<template<typename...> class  Container = std::vector, typename Label = uint8_t>
-Container<Label> read_mnist_label_file(const std::string& path){
+Container<Label> read_mnist_label_file(const std::string& path, std::size_t limit = 0){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -115,6 +133,10 @@ Container<Label> read_mnist_label_file(const std::string& path){
                 //platform-specific
                 auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
 
+                if(limit > 0 && count > limit){
+                    count = limit;
+                }
+
                 Container<Label> labels(count);
 
                 for(size_t i = 0; i < count; ++i){
@@ -131,34 +153,34 @@ Container<Label> read_mnist_label_file(const std::string& path){
 }
 
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t>
-Container<Sub<Pixel>> read_training_images(){
-    return read_mnist_image_file<Container,Sub,Pixel>("mnist/train-images-idx3-ubyte");
+Container<Sub<Pixel>> read_training_images(std::size_t limit = 0){
+    return read_mnist_image_file<Container,Sub,Pixel>("mnist/train-images-idx3-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t>
-Container<Sub<Pixel>> read_test_images(){
-    return read_mnist_image_file<Container,Sub,Pixel>("mnist/t10k-images-idx3-ubyte");
+Container<Sub<Pixel>> read_test_images(std::size_t limit = 0){
+    return read_mnist_image_file<Container,Sub,Pixel>("mnist/t10k-images-idx3-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, typename Label = uint8_t>
-Container<Label> read_training_labels(){
-    return read_mnist_label_file<Container, Label>("mnist/train-labels-idx1-ubyte");
+Container<Label> read_training_labels(std::size_t limit = 0){
+    return read_mnist_label_file<Container, Label>("mnist/train-labels-idx1-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, typename Label = uint8_t>
-Container<Label> read_test_labels(){
-    return read_mnist_label_file<Container, Label>("mnist/t10k-labels-idx1-ubyte");
+Container<Label> read_test_labels(std::size_t limit = 0){
+    return read_mnist_label_file<Container, Label>("mnist/t10k-labels-idx1-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t, typename Label = uint8_t>
-MNIST_dataset<Container, Sub, Pixel, Label> read_dataset(){
+MNIST_dataset<Container, Sub, Pixel, Label> read_dataset(std::size_t training_limit = 0, std::size_t test_limit = 0){
     MNIST_dataset<Container, Sub, Pixel, Label> dataset;
 
-    dataset.training_images = read_training_images<Container, Sub, Pixel>();
-    dataset.training_labels = read_training_labels<Container, Label>();
+    dataset.training_images = read_training_images<Container, Sub, Pixel>(training_limit);
+    dataset.training_labels = read_training_labels<Container, Label>(training_limit);
 
-    dataset.test_images = read_test_images<Container, Sub, Pixel>();
-    dataset.test_labels = read_test_labels<Container, Label>();
+    dataset.test_images = read_test_images<Container, Sub, Pixel>(test_limit);
+    dataset.test_labels = read_test_labels<Container, Label>(test_limit);
 
     return std::move(dataset);
 }
