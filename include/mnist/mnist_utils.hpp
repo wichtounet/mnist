@@ -43,7 +43,7 @@ template<typename Container>
 void normalize_each(Container& values){
     for(auto& vec : values){
         //zero-mean
-        auto m = mean(vec);
+        auto m = mnist::mean(vec);
         for(auto& v : vec){
             v -= m;
         }
