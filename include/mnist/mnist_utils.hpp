@@ -67,6 +67,6 @@ void normalize_dataset(Dataset& dataset){
     normalize_each(dataset.test_images);
 }
 
-};
+}
 
 #endif
