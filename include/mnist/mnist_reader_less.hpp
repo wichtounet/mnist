@@ -76,7 +76,7 @@ std::vector<std::vector<Pixel>> read_mnist_image_file(const std::string& path){
                     }
                 }
 
-                return std::move(images);
+                return images;
             }
         }
     }
@@ -122,7 +122,7 @@ std::vector<Label> read_mnist_label_file(const std::string& path){
                     labels[i] = static_cast<Label>(label);
                 }
 
-                return std::move(labels);
+                return labels;
             }
         }
     }
@@ -160,7 +160,7 @@ MNIST_dataset<Pixel, Label> read_dataset(){
     dataset.test_images = read_test_images<Pixel>();
     dataset.test_labels = read_test_labels<Label>();
 
-    return std::move(dataset);
+    return dataset;
 }
 
 } //end of namespace mnist
