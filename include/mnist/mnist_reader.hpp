@@ -94,7 +94,7 @@ Container<Sub<Pixel>> read_mnist_image_file(const std::string& path, std::size_t
                     }
                 }
 
-                return std::move(images);
+                return images;
             }
         }
     }
@@ -144,7 +144,7 @@ Container<Label> read_mnist_label_file(const std::string& path, std::size_t limi
                     labels[i] = static_cast<Label>(label);
                 }
 
-                return std::move(labels);
+                return labels;
             }
         }
     }
@@ -182,7 +182,7 @@ MNIST_dataset<Container, Sub, Pixel, Label> read_dataset(std::size_t training_li
     dataset.test_images = read_test_images<Container, Sub, Pixel>(test_limit);
     dataset.test_labels = read_test_labels<Container, Label>(test_limit);
 
-    return std::move(dataset);
+    return dataset;
 }
 
 } //end of namespace mnist
