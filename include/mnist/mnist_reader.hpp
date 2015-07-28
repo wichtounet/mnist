@@ -45,8 +45,8 @@ inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t positi
     return (value << 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0X0000FF00) | (value >> 24);
 }
 
-template<template<typename...> class Container = std::vector, typename Image>
-Container<Image> read_mnist_image_file(const std::string& path, std::size_t limit = 0){
+template<template<typename...> class Container = std::vector, typename Image, typename Functor>
+Container<Image> read_mnist_image_file(const std::string& path, std::size_t limit, Functor func){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -86,7 +86,7 @@ Container<Image> read_mnist_image_file(const std::string& path, std::size_t limi
                 images.reserve(count);
 
                 for(size_t i = 0; i < count; ++i){
-                    images.emplace_back(rows * columns);
+                    images.push_back(func());
 
                     for(size_t j = 0; j < rows * columns; ++j){
                         auto pixel = *image_buffer++;
@@ -152,34 +152,47 @@ Container<Label> read_mnist_label_file(const std::string& path, std::size_t limi
     return {};
 }
 
-template<template<typename...> class Container = std::vector, typename Image>
-Container<Image> read_training_images(std::size_t limit = 0){
-    return read_mnist_image_file<Container, Image>("mnist/train-images-idx3-ubyte", limit);
+template<template<typename...> class Container = std::vector, typename Image, typename Functor>
+Container<Image> read_training_images(std::size_t limit, Functor func){
+    return read_mnist_image_file<Container, Image>("mnist/train-images-idx3-ubyte", limit, func);
 }
 
-template<template<typename...> class Container = std::vector, typename Image>
-Container<Image> read_test_images(std::size_t limit = 0){
-    return read_mnist_image_file<Container, Image>("mnist/t10k-images-idx3-ubyte", limit);
+template<template<typename...> class Container = std::vector, typename Image, typename Functor>
+Container<Image> read_test_images(std::size_t limit, Functor func){
+    return read_mnist_image_file<Container, Image>("mnist/t10k-images-idx3-ubyte", limit, func);
 }
 
 template<template<typename...> class Container = std::vector, typename Label = uint8_t>
-Container<Label> read_training_labels(std::size_t limit = 0){
+Container<Label> read_training_labels(std::size_t limit){
     return read_mnist_label_file<Container, Label>("mnist/train-labels-idx1-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, typename Label = uint8_t>
-Container<Label> read_test_labels(std::size_t limit = 0){
+Container<Label> read_test_labels(std::size_t limit){
     return read_mnist_label_file<Container, Label>("mnist/t10k-labels-idx1-ubyte", limit);
+}
+
+template<template<typename...> class Container, typename Image, typename Label = uint8_t>
+MNIST_dataset<Container, Image, Label> read_dataset_3d(std::size_t training_limit = 0, std::size_t test_limit = 0){
+    MNIST_dataset<Container, Image, Label> dataset;
+
+    dataset.training_images = read_training_images<Container, Image>(training_limit, []{return Image(1, 28, 28);});
+    dataset.training_labels = read_training_labels<Container, Label>(training_limit);
+
+    dataset.test_images = read_test_images<Container, Image>(test_limit, []{return Image(1, 28, 28);});
+    dataset.test_labels = read_test_labels<Container, Label>(test_limit);
+
+    return dataset;
 }
 
 template<template<typename...> class Container, typename Image, typename Label = uint8_t>
 MNIST_dataset<Container, Image, Label> read_dataset_direct(std::size_t training_limit = 0, std::size_t test_limit = 0){
     MNIST_dataset<Container, Image, Label> dataset;
 
-    dataset.training_images = read_training_images<Container, Image>(training_limit);
+    dataset.training_images = read_training_images<Container, Image>(training_limit, []{ return Image(1 * 28 * 28); });
     dataset.training_labels = read_training_labels<Container, Label>(training_limit);
 
-    dataset.test_images = read_test_images<Container, Image>(test_limit);
+    dataset.test_images = read_test_images<Container, Image>(test_limit, []{ return Image(1 * 28 * 28); });
     dataset.test_labels = read_test_labels<Container, Label>(test_limit);
 
     return dataset;
