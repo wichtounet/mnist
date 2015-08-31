@@ -46,7 +46,7 @@ inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t positi
 }
 
 template<template<typename...> class Container = std::vector, typename Image, typename Functor>
-Container<Image> read_mnist_image_file(const std::string& path, std::size_t limit, Functor func){
+void read_mnist_image_file(Container<Image>& images, const std::string& path, std::size_t limit, Functor func){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -82,7 +82,6 @@ Container<Image> read_mnist_image_file(const std::string& path, std::size_t limi
                     count = limit;
                 }
 
-                Container<Image> images;
                 images.reserve(count);
 
                 for(size_t i = 0; i < count; ++i){
@@ -93,17 +92,13 @@ Container<Image> read_mnist_image_file(const std::string& path, std::size_t limi
                         images[i][j] = static_cast<typename Image::value_type>(pixel);
                     }
                 }
-
-                return std::move(images);
             }
         }
     }
-
-    return {};
 }
 
 template<template<typename...> class  Container = std::vector, typename Label = uint8_t>
-Container<Label> read_mnist_label_file(const std::string& path, std::size_t limit = 0){
+void read_mnist_label_file(Container<Label>& labels, const std::string& path, std::size_t limit = 0){
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
 
@@ -137,39 +132,43 @@ Container<Label> read_mnist_label_file(const std::string& path, std::size_t limi
                     count = limit;
                 }
 
-                Container<Label> labels(count);
+                labels.resize(count);
 
                 for(size_t i = 0; i < count; ++i){
                     auto label = *label_buffer++;
                     labels[i] = static_cast<Label>(label);
                 }
-
-                return std::move(labels);
             }
         }
     }
-
-    return {};
 }
 
 template<template<typename...> class Container = std::vector, typename Image, typename Functor>
 Container<Image> read_training_images(std::size_t limit, Functor func){
-    return read_mnist_image_file<Container, Image>("mnist/train-images-idx3-ubyte", limit, func);
+    Container<Image> images;
+    read_mnist_image_file<Container, Image>(images, "mnist/train-images-idx3-ubyte", limit, func);
+    return images;
 }
 
 template<template<typename...> class Container = std::vector, typename Image, typename Functor>
 Container<Image> read_test_images(std::size_t limit, Functor func){
-    return read_mnist_image_file<Container, Image>("mnist/t10k-images-idx3-ubyte", limit, func);
+    Container<Image> images;
+    read_mnist_image_file<Container, Image>(images, "mnist/t10k-images-idx3-ubyte", limit, func);
+    return images;
 }
 
 template<template<typename...> class Container = std::vector, typename Label = uint8_t>
 Container<Label> read_training_labels(std::size_t limit){
-    return read_mnist_label_file<Container, Label>("mnist/train-labels-idx1-ubyte", limit);
+    Container<Label> labels;
+    read_mnist_label_file<Container, Label>(labels, "mnist/train-labels-idx1-ubyte", limit);
+    return labels;
 }
 
 template<template<typename...> class Container = std::vector, typename Label = uint8_t>
 Container<Label> read_test_labels(std::size_t limit){
-    return read_mnist_label_file<Container, Label>("mnist/t10k-labels-idx1-ubyte", limit);
+    Container<Label> labels;
+    read_mnist_label_file<Container, Label>(labels, "mnist/t10k-labels-idx1-ubyte", limit);
+    return labels;
 }
 
 template<template<typename...> class Container, typename Image, typename Label = uint8_t>
