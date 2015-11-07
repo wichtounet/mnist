@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains functions to read the MNIST dataset
+ */
+
 #ifndef MNIST_READER_HPP
 #define MNIST_READER_HPP
 

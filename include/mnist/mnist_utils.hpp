@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains utility functions to manipulate the MNIST dataset
+ */
+
 #ifndef MNIST_UTILS_HPP
 #define MNIST_UTILS_HPP
 
