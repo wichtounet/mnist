@@ -29,10 +29,10 @@ namespace mnist {
  */
 template<template<typename...> class Container, typename Image, typename Label>
 struct MNIST_dataset {
-    Container<Image> training_images;
-    Container<Image> test_images;
-    Container<Label> training_labels;
-    Container<Label> test_labels;
+    Container<Image> training_images; ///< The training images
+    Container<Image> test_images;     ///< The test images
+    Container<Label> training_labels; ///< The training labels
+    Container<Label> test_labels;     ///< The test labels
 
     /*!
      * \brief Resize the training set to new_size

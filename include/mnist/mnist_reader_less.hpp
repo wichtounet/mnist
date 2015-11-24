@@ -30,10 +30,10 @@ namespace mnist {
  */
 template<typename Pixel = uint8_t, typename Label = uint8_t>
 struct MNIST_dataset {
-    std::vector<std::vector<Pixel>> training_images;
-    std::vector<std::vector<Pixel>> test_images;
-    std::vector<Label> training_labels;
-    std::vector<Label> test_labels;
+    std::vector<std::vector<Pixel>> training_images; ///< The training images
+    std::vector<std::vector<Pixel>> test_images;     ///< The test images
+    std::vector<Label> training_labels;              ///< The training labels
+    std::vector<Label> test_labels;                  ///< The test labels
 };
 
 /*!
