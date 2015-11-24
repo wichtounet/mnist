@@ -293,6 +293,15 @@ MNIST_dataset<Container, Image, Label> read_dataset_direct(std::size_t training_
     return dataset;
 }
 
+/*!
+ * \brief Read dataset.
+ *
+ * The dataset is assumed to be in a mnist subfolder
+ *
+ * \param training_limit The maximum number of elements to read from training set (0: no limit)
+ * \param test_limit The maximum number of elements to read from test set (0: no limit)
+ * \return The dataset
+ */
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t, typename Label = uint8_t>
 MNIST_dataset<Container, Sub<Pixel>, Label> read_dataset(std::size_t training_limit = 0, std::size_t test_limit = 0){
     return read_dataset_direct<Container, Sub<Pixel>>(training_limit, test_limit);
