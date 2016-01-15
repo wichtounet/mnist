@@ -19,6 +19,8 @@
 #include <cstdint>
 #include <memory>
 
+#include "mnist_reader_common.hpp"
+
 namespace mnist {
 
 /*!
@@ -64,19 +66,6 @@ struct MNIST_dataset {
 };
 
 /*!
- * \brief Extract the MNIST header from the given buffer
- * \param buffer The current buffer
- * \param position The current reading positoin
- * \return The value of the mnist header
- */
-inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t position){
-    auto header = reinterpret_cast<uint32_t*>(buffer.get());
-
-    auto value = *(header + position);
-    return (value << 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0X0000FF00) | (value >> 24);
-}
-
-/*!
  * \brief Read a MNIST image file inside the given container
  * \param images The container to fill with the images
  * \param path The path to the image file
@@ -85,51 +74,30 @@ inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t positi
  */
 template<template<typename...> class Container = std::vector, typename Image, typename Functor>
 void read_mnist_image_file(Container<Image>& images, const std::string& path, std::size_t limit, Functor func){
-    std::ifstream file;
-    file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
+    auto buffer = read_mnist_file(path, 0x803);
 
-    if(!file){
-        std::cout << "Error opening file" << std::endl;
-    } else {
-        auto size = file.tellg();
-        std::unique_ptr<char[]> buffer(new char[size]);
+    if(buffer){
+        auto count = read_header(buffer, 1);
+        auto rows = read_header(buffer, 2);
+        auto columns = read_header(buffer, 3);
 
-        //Read the entire file at once
-        file.seekg(0, std::ios::beg);
-        file.read(buffer.get(), size);
-        file.close();
+        //Skip the header
+        //Cast to unsigned char is necessary cause signedness of char is
+        //platform-specific
+        auto image_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 16);
 
-        auto magic = read_header(buffer, 0);
+        if(limit > 0 && count > limit){
+            count = limit;
+        }
 
-        if(magic != 0x803){
-            std::cout << "Invalid magic number, probably not a MNIST file" << std::endl;
-        } else {
-            auto count = read_header(buffer, 1);
-            auto rows = read_header(buffer, 2);
-            auto columns = read_header(buffer, 3);
+        images.reserve(count);
 
-            if(size < count * rows * columns + 16){
-                std::cout << "The file is not large enough to hold all the data, probably corrupted" << std::endl;
-            } else {
-                //Skip the header
-                //Cast to unsigned char is necessary cause signedness of char is
-                //platform-specific
-                auto image_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 16);
+        for(size_t i = 0; i < count; ++i){
+            images.push_back(func());
 
-                if(limit > 0 && count > limit){
-                    count = limit;
-                }
-
-                images.reserve(count);
-
-                for(size_t i = 0; i < count; ++i){
-                    images.push_back(func());
-
-                    for(size_t j = 0; j < rows * columns; ++j){
-                        auto pixel = *image_buffer++;
-                        images[i][j] = static_cast<typename Image::value_type>(pixel);
-                    }
-                }
+            for(size_t j = 0; j < rows * columns; ++j){
+                auto pixel = *image_buffer++;
+                images[i][j] = static_cast<typename Image::value_type>(pixel);
             }
         }
     }
@@ -143,46 +111,25 @@ void read_mnist_image_file(Container<Image>& images, const std::string& path, st
  */
 template<template<typename...> class  Container = std::vector, typename Label = uint8_t>
 void read_mnist_label_file(Container<Label>& labels, const std::string& path, std::size_t limit = 0){
-    std::ifstream file;
-    file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
+    auto buffer = read_mnist_file(path, 0x801);
 
-    if(!file){
-        std::cout << "Error opening file" << std::endl;
-    } else {
-        auto size = file.tellg();
-        std::unique_ptr<char[]> buffer(new char[size]);
+    if(buffer){
+        auto count = read_header(buffer, 1);
 
-        //Read the entire file at once
-        file.seekg(0, std::ios::beg);
-        file.read(buffer.get(), size);
-        file.close();
+        //Skip the header
+        //Cast to unsigned char is necessary cause signedness of char is
+        //platform-specific
+        auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
 
-        auto magic = read_header(buffer, 0);
+        if(limit > 0 && count > limit){
+            count = limit;
+        }
 
-        if(magic != 0x801){
-            std::cout << "Invalid magic number, probably not a MNIST file" << std::endl;
-        } else {
-            auto count = read_header(buffer, 1);
+        labels.resize(count);
 
-            if(size < count + 8){
-                std::cout << "The file is not large enough to hold all the data, probably corrupted" << std::endl;
-            } else {
-                //Skip the header
-                //Cast to unsigned char is necessary cause signedness of char is
-                //platform-specific
-                auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
-
-                if(limit > 0 && count > limit){
-                    count = limit;
-                }
-
-                labels.resize(count);
-
-                for(size_t i = 0; i < count; ++i){
-                    auto label = *label_buffer++;
-                    labels[i] = static_cast<Label>(label);
-                }
-            }
+        for(size_t i = 0; i < count; ++i){
+            auto label = *label_buffer++;
+            labels[i] = static_cast<Label>(label);
         }
     }
 }
