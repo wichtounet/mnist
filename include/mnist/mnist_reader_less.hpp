@@ -30,7 +30,7 @@ namespace mnist {
  * \tparam Pixel The type of a pixel
  * \tparam Label The type of a label
  */
-template<typename Pixel = uint8_t, typename Label = uint8_t>
+template <typename Pixel = uint8_t, typename Label = uint8_t>
 struct MNIST_dataset {
     std::vector<std::vector<Pixel>> training_images; ///< The training images
     std::vector<std::vector<Pixel>> test_images;     ///< The test images
@@ -43,13 +43,13 @@ struct MNIST_dataset {
  * \param path The path to the image file
  * \return A std::vector filled with the read images
  */
-template<typename Pixel = uint8_t, typename Label = uint8_t>
-std::vector<std::vector<Pixel>> read_mnist_image_file(const std::string& path){
+template <typename Pixel = uint8_t, typename Label = uint8_t>
+std::vector<std::vector<Pixel>> read_mnist_image_file(const std::string& path) {
     auto buffer = read_mnist_file(path, 0x803);
 
-    if(buffer){
-        auto count = read_header(buffer, 1);
-        auto rows = read_header(buffer, 2);
+    if (buffer) {
+        auto count   = read_header(buffer, 1);
+        auto rows    = read_header(buffer, 2);
         auto columns = read_header(buffer, 3);
 
         //Skip the header
@@ -60,11 +60,11 @@ std::vector<std::vector<Pixel>> read_mnist_image_file(const std::string& path){
         std::vector<std::vector<Pixel>> images;
         images.reserve(count);
 
-        for(size_t i = 0; i < count; ++i){
+        for (size_t i = 0; i < count; ++i) {
             images.emplace_back(rows * columns);
 
-            for(size_t j = 0; j < rows * columns; ++j){
-                auto pixel = *image_buffer++;
+            for (size_t j = 0; j < rows * columns; ++j) {
+                auto pixel   = *image_buffer++;
                 images[i][j] = static_cast<Pixel>(pixel);
             }
         }
@@ -80,11 +80,11 @@ std::vector<std::vector<Pixel>> read_mnist_image_file(const std::string& path){
  * \param path The path to the image file
  * \return A std::vector filled with the read labels
  */
-template<typename Label = uint8_t>
-std::vector<Label> read_mnist_label_file(const std::string& path){
+template <typename Label = uint8_t>
+std::vector<Label> read_mnist_label_file(const std::string& path) {
     auto buffer = read_mnist_file(path, 0x801);
 
-    if(buffer){
+    if (buffer) {
         auto count = read_header(buffer, 1);
 
         //Skip the header
@@ -94,9 +94,9 @@ std::vector<Label> read_mnist_label_file(const std::string& path){
 
         std::vector<Label> labels(count);
 
-        for(size_t i = 0; i < count; ++i){
+        for (size_t i = 0; i < count; ++i) {
             auto label = *label_buffer++;
-            labels[i] = static_cast<Label>(label);
+            labels[i]  = static_cast<Label>(label);
         }
 
         return labels;
@@ -112,9 +112,9 @@ std::vector<Label> read_mnist_label_file(const std::string& path){
  *
  * \return Container filled with the images
  */
-template<typename Pixel = uint8_t, typename Label = uint8_t>
-std::vector<std::vector<Pixel>> read_training_images(){
-    return read_mnist_image_file<std::vector,std::vector,Pixel>("mnist/train-images-idx3-ubyte");
+template <typename Pixel = uint8_t, typename Label = uint8_t>
+std::vector<std::vector<Pixel>> read_training_images() {
+    return read_mnist_image_file<std::vector, std::vector, Pixel>("mnist/train-images-idx3-ubyte");
 }
 
 /*!
@@ -124,9 +124,9 @@ std::vector<std::vector<Pixel>> read_training_images(){
  *
  * \return Container filled with the images
  */
-template<typename Pixel = uint8_t, typename Label = uint8_t>
-std::vector<std::vector<Pixel>> read_test_images(){
-    return read_mnist_image_file<std::vector,std::vector,Pixel>("mnist/t10k-images-idx3-ubyte");
+template <typename Pixel = uint8_t, typename Label = uint8_t>
+std::vector<std::vector<Pixel>> read_test_images() {
+    return read_mnist_image_file<std::vector, std::vector, Pixel>("mnist/t10k-images-idx3-ubyte");
 }
 
 /*!
@@ -136,8 +136,8 @@ std::vector<std::vector<Pixel>> read_test_images(){
  *
  * \return Container filled with the labels
  */
-template<typename Label = uint8_t>
-std::vector<Label> read_training_labels(){
+template <typename Label = uint8_t>
+std::vector<Label> read_training_labels() {
     return read_mnist_label_file<std::vector>("mnist/train-labels-idx1-ubyte");
 }
 
@@ -148,8 +148,8 @@ std::vector<Label> read_training_labels(){
  *
  * \return Container filled with the labels
  */
-template<typename Label = uint8_t>
-std::vector<Label> read_test_labels(){
+template <typename Label = uint8_t>
+std::vector<Label> read_test_labels() {
     return read_mnist_label_file<std::vector>("mnist/t10k-labels-idx1-ubyte");
 }
 
@@ -160,8 +160,8 @@ std::vector<Label> read_test_labels(){
  *
  * \return The dataset
  */
-template<typename Pixel = uint8_t, typename Label = uint8_t>
-MNIST_dataset<Pixel, Label> read_dataset(){
+template <typename Pixel = uint8_t, typename Label = uint8_t>
+MNIST_dataset<Pixel, Label> read_dataset() {
     MNIST_dataset<Pixel, Label> dataset;
 
     dataset.training_images = read_training_images<Pixel>();

@@ -21,7 +21,7 @@ namespace mnist {
  * \param position The current reading positoin
  * \return The value of the mnist header
  */
-inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t position){
+inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t position) {
     auto header = reinterpret_cast<uint32_t*>(buffer.get());
 
     auto value = *(header + position);
@@ -33,11 +33,11 @@ inline uint32_t read_header(const std::unique_ptr<char[]>& buffer, size_t positi
  * \param path The path to the image file
  * \return The buffer of byte on success, a nullptr-unique_ptr otherwise
  */
-inline std::unique_ptr<char[]> read_mnist_file(const std::string& path, uint32_t key){
+inline std::unique_ptr<char[]> read_mnist_file(const std::string& path, uint32_t key) {
     std::ifstream file;
     file.open(path, std::ios::in | std::ios::binary | std::ios::ate);
 
-    if(!file){
+    if (!file) {
         std::cout << "Error opening file" << std::endl;
         return {};
     }
@@ -52,23 +52,23 @@ inline std::unique_ptr<char[]> read_mnist_file(const std::string& path, uint32_t
 
     auto magic = read_header(buffer, 0);
 
-    if(magic != key){
+    if (magic != key) {
         std::cout << "Invalid magic number, probably not a MNIST file" << std::endl;
         return {};
     }
 
     auto count = read_header(buffer, 1);
 
-    if(magic == 0x803){
-        auto rows = read_header(buffer, 2);
+    if (magic == 0x803) {
+        auto rows    = read_header(buffer, 2);
         auto columns = read_header(buffer, 3);
 
-        if(size < count * rows * columns + 16){
+        if (size < count * rows * columns + 16) {
             std::cout << "The file is not large enough to hold all the data, probably corrupted" << std::endl;
             return {};
         }
-    } else if(magic == 0x801){
-        if(size < count + 8){
+    } else if (magic == 0x801) {
+        if (size < count + 8) {
             std::cout << "The file is not large enough to hold all the data, probably corrupted" << std::endl;
             return {};
         }

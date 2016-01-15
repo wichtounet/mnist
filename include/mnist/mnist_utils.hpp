@@ -22,10 +22,10 @@ namespace mnist {
  * \param values The collection of ranges to binarize
  * \param threshold The threshold for binarization
  */
-template<typename Container>
-void binarize_each(Container& values, double threshold = 30.0){
-    for(auto& vec : values){
-        for(auto& v : vec){
+template <typename Container>
+void binarize_each(Container& values, double threshold = 30.0) {
+    for (auto& vec : values) {
+        for (auto& v : vec) {
             v = v > threshold ? 1.0 : 0.0;
         }
     }
@@ -36,10 +36,10 @@ void binarize_each(Container& values, double threshold = 30.0){
  * \param container The range to compute the average from
  * \return The average value of the range
  */
-template<typename Container>
-double mean(const Container& container){
+template <typename Container>
+double mean(const Container& container) {
     double mean = 0.0;
-    for(auto& value : container){
+    for (auto& value : container) {
         mean += value;
     }
     return mean / container.size();
@@ -51,10 +51,10 @@ double mean(const Container& container){
  * \param mean The mean of the given range
  * \return The standard deviation of the range
  */
-template<typename Container>
-double stddev(const Container& container, double mean){
+template <typename Container>
+double stddev(const Container& container, double mean) {
     double std = 0.0;
-    for(auto& value : container){
+    for (auto& value : container) {
         std += (value - mean) * (value - mean);
     }
     return std::sqrt(std / container.size());
@@ -64,17 +64,17 @@ double stddev(const Container& container, double mean){
  * \brief Normalize each sub range inside the given range
  * \param values The collection of ranges to normalize
  */
-template<typename Container>
-void normalize_each(Container& values){
-    for(auto& vec : values){
+template <typename Container>
+void normalize_each(Container& values) {
+    for (auto& vec : values) {
         //zero-mean
         auto m = mnist::mean(vec);
-        for(auto& v : vec){
+        for (auto& v : vec) {
             v -= m;
         }
         //unit variance
         auto s = stddev(vec, 0.0);
-        for(auto& v : vec){
+        for (auto& v : vec) {
             v /= s;
         }
     }
@@ -84,8 +84,8 @@ void normalize_each(Container& values){
  * \brief Binarize the given MNIST dataset
  * \param dataset The dataset to binarize
  */
-template<typename Dataset>
-void binarize_dataset(Dataset& dataset){
+template <typename Dataset>
+void binarize_dataset(Dataset& dataset) {
     binarize_each(dataset.training_images);
     binarize_each(dataset.test_images);
 }
@@ -94,8 +94,8 @@ void binarize_dataset(Dataset& dataset){
  * \brief Normalize the given MNIST dataset to zero-mean and unit variance
  * \param dataset The dataset to normalize
  */
-template<typename Dataset>
-void normalize_dataset(Dataset& dataset){
+template <typename Dataset>
+void normalize_dataset(Dataset& dataset) {
     normalize_each(dataset.training_images);
     normalize_each(dataset.test_images);
 }

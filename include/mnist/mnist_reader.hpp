@@ -29,7 +29,7 @@ namespace mnist {
  * \tparam Image The type of image
  * \tparam Label The type of label
  */
-template<template<typename...> class Container, typename Image, typename Label>
+template <template <typename...> class Container, typename Image, typename Label>
 struct MNIST_dataset {
     Container<Image> training_images; ///< The training images
     Container<Image> test_images;     ///< The test images
@@ -43,8 +43,8 @@ struct MNIST_dataset {
      *
      * \param new_size The size to resize the training sets to.
      */
-    void resize_training(std::size_t new_size){
-        if(training_images.size() > new_size){
+    void resize_training(std::size_t new_size) {
+        if (training_images.size() > new_size) {
             training_images.resize(new_size);
             training_labels.resize(new_size);
         }
@@ -57,8 +57,8 @@ struct MNIST_dataset {
      *
      * \param new_size The size to resize the test sets to.
      */
-    void resize_test(std::size_t new_size){
-        if(test_images.size() > new_size){
+    void resize_test(std::size_t new_size) {
+        if (test_images.size() > new_size) {
             test_images.resize(new_size);
             test_labels.resize(new_size);
         }
@@ -72,13 +72,13 @@ struct MNIST_dataset {
  * \param limit The maximum number of elements to read (0: no limit)
  * \param func The functor to create the image object
  */
-template<template<typename...> class Container = std::vector, typename Image, typename Functor>
-void read_mnist_image_file(Container<Image>& images, const std::string& path, std::size_t limit, Functor func){
+template <template <typename...> class Container = std::vector, typename Image, typename Functor>
+void read_mnist_image_file(Container<Image>& images, const std::string& path, std::size_t limit, Functor func) {
     auto buffer = read_mnist_file(path, 0x803);
 
-    if(buffer){
-        auto count = read_header(buffer, 1);
-        auto rows = read_header(buffer, 2);
+    if (buffer) {
+        auto count   = read_header(buffer, 1);
+        auto rows    = read_header(buffer, 2);
         auto columns = read_header(buffer, 3);
 
         //Skip the header
@@ -86,17 +86,17 @@ void read_mnist_image_file(Container<Image>& images, const std::string& path, st
         //platform-specific
         auto image_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 16);
 
-        if(limit > 0 && count > limit){
+        if (limit > 0 && count > limit) {
             count = limit;
         }
 
         images.reserve(count);
 
-        for(size_t i = 0; i < count; ++i){
+        for (size_t i = 0; i < count; ++i) {
             images.push_back(func());
 
-            for(size_t j = 0; j < rows * columns; ++j){
-                auto pixel = *image_buffer++;
+            for (size_t j = 0; j < rows * columns; ++j) {
+                auto pixel   = *image_buffer++;
                 images[i][j] = static_cast<typename Image::value_type>(pixel);
             }
         }
@@ -109,11 +109,11 @@ void read_mnist_image_file(Container<Image>& images, const std::string& path, st
  * \param path The path to the label file
  * \param limit The maximum number of elements to read (0: no limit)
  */
-template<template<typename...> class  Container = std::vector, typename Label = uint8_t>
-void read_mnist_label_file(Container<Label>& labels, const std::string& path, std::size_t limit = 0){
+template <template <typename...> class Container = std::vector, typename Label = uint8_t>
+void read_mnist_label_file(Container<Label>& labels, const std::string& path, std::size_t limit = 0) {
     auto buffer = read_mnist_file(path, 0x801);
 
-    if(buffer){
+    if (buffer) {
         auto count = read_header(buffer, 1);
 
         //Skip the header
@@ -121,15 +121,15 @@ void read_mnist_label_file(Container<Label>& labels, const std::string& path, st
         //platform-specific
         auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
 
-        if(limit > 0 && count > limit){
+        if (limit > 0 && count > limit) {
             count = limit;
         }
 
         labels.resize(count);
 
-        for(size_t i = 0; i < count; ++i){
+        for (size_t i = 0; i < count; ++i) {
             auto label = *label_buffer++;
-            labels[i] = static_cast<Label>(label);
+            labels[i]  = static_cast<Label>(label);
         }
     }
 }
@@ -143,8 +143,8 @@ void read_mnist_label_file(Container<Label>& labels, const std::string& path, st
  * \param func The functor to create the image objects.
  * \return Container filled with the images
  */
-template<template<typename...> class Container = std::vector, typename Image, typename Functor>
-Container<Image> read_training_images(std::size_t limit, Functor func){
+template <template <typename...> class Container = std::vector, typename Image, typename Functor>
+Container<Image> read_training_images(std::size_t limit, Functor func) {
     Container<Image> images;
     read_mnist_image_file<Container, Image>(images, "mnist/train-images-idx3-ubyte", limit, func);
     return images;
@@ -159,8 +159,8 @@ Container<Image> read_training_images(std::size_t limit, Functor func){
  * \param func The functor to create the image objects.
  * \return Container filled with the images
  */
-template<template<typename...> class Container = std::vector, typename Image, typename Functor>
-Container<Image> read_test_images(std::size_t limit, Functor func){
+template <template <typename...> class Container = std::vector, typename Image, typename Functor>
+Container<Image> read_test_images(std::size_t limit, Functor func) {
     Container<Image> images;
     read_mnist_image_file<Container, Image>(images, "mnist/t10k-images-idx3-ubyte", limit, func);
     return images;
@@ -174,8 +174,8 @@ Container<Image> read_test_images(std::size_t limit, Functor func){
  * \param limit The maximum number of elements to read (0: no limit)
  * \return Container filled with the labels
  */
-template<template<typename...> class Container = std::vector, typename Label = uint8_t>
-Container<Label> read_training_labels(std::size_t limit){
+template <template <typename...> class Container = std::vector, typename Label = uint8_t>
+Container<Label> read_training_labels(std::size_t limit) {
     Container<Label> labels;
     read_mnist_label_file<Container, Label>(labels, "mnist/train-labels-idx1-ubyte", limit);
     return labels;
@@ -189,8 +189,8 @@ Container<Label> read_training_labels(std::size_t limit){
  * \param limit The maximum number of elements to read (0: no limit)
  * \return Container filled with the labels
  */
-template<template<typename...> class Container = std::vector, typename Label = uint8_t>
-Container<Label> read_test_labels(std::size_t limit){
+template <template <typename...> class Container = std::vector, typename Label = uint8_t>
+Container<Label> read_test_labels(std::size_t limit) {
     Container<Label> labels;
     read_mnist_label_file<Container, Label>(labels, "mnist/t10k-labels-idx1-ubyte", limit);
     return labels;
@@ -205,14 +205,14 @@ Container<Label> read_test_labels(std::size_t limit){
  * \param test_limit The maximum number of elements to read from test set (0: no limit)
  * \return The dataset
  */
-template<template<typename...> class Container, typename Image, typename Label = uint8_t>
-MNIST_dataset<Container, Image, Label> read_dataset_3d(std::size_t training_limit = 0, std::size_t test_limit = 0){
+template <template <typename...> class Container, typename Image, typename Label = uint8_t>
+MNIST_dataset<Container, Image, Label> read_dataset_3d(std::size_t training_limit = 0, std::size_t test_limit = 0) {
     MNIST_dataset<Container, Image, Label> dataset;
 
-    dataset.training_images = read_training_images<Container, Image>(training_limit, []{return Image(1, 28, 28);});
+    dataset.training_images = read_training_images<Container, Image>(training_limit, [] { return Image(1, 28, 28); });
     dataset.training_labels = read_training_labels<Container, Label>(training_limit);
 
-    dataset.test_images = read_test_images<Container, Image>(test_limit, []{return Image(1, 28, 28);});
+    dataset.test_images = read_test_images<Container, Image>(test_limit, [] { return Image(1, 28, 28); });
     dataset.test_labels = read_test_labels<Container, Label>(test_limit);
 
     return dataset;
@@ -227,14 +227,14 @@ MNIST_dataset<Container, Image, Label> read_dataset_3d(std::size_t training_limi
  * \param test_limit The maximum number of elements to read from test set (0: no limit)
  * \return The dataset
  */
-template<template<typename...> class Container, typename Image, typename Label = uint8_t>
-MNIST_dataset<Container, Image, Label> read_dataset_direct(std::size_t training_limit = 0, std::size_t test_limit = 0){
+template <template <typename...> class Container, typename Image, typename Label = uint8_t>
+MNIST_dataset<Container, Image, Label> read_dataset_direct(std::size_t training_limit = 0, std::size_t test_limit = 0) {
     MNIST_dataset<Container, Image, Label> dataset;
 
-    dataset.training_images = read_training_images<Container, Image>(training_limit, []{ return Image(1 * 28 * 28); });
+    dataset.training_images = read_training_images<Container, Image>(training_limit, [] { return Image(1 * 28 * 28); });
     dataset.training_labels = read_training_labels<Container, Label>(training_limit);
 
-    dataset.test_images = read_test_images<Container, Image>(test_limit, []{ return Image(1 * 28 * 28); });
+    dataset.test_images = read_test_images<Container, Image>(test_limit, [] { return Image(1 * 28 * 28); });
     dataset.test_labels = read_test_labels<Container, Label>(test_limit);
 
     return dataset;
@@ -249,8 +249,8 @@ MNIST_dataset<Container, Image, Label> read_dataset_direct(std::size_t training_
  * \param test_limit The maximum number of elements to read from test set (0: no limit)
  * \return The dataset
  */
-template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t, typename Label = uint8_t>
-MNIST_dataset<Container, Sub<Pixel>, Label> read_dataset(std::size_t training_limit = 0, std::size_t test_limit = 0){
+template <template <typename...> class Container = std::vector, template <typename...> class Sub = std::vector, typename Pixel = uint8_t, typename Label = uint8_t>
+MNIST_dataset<Container, Sub<Pixel>, Label> read_dataset(std::size_t training_limit = 0, std::size_t test_limit = 0) {
     return read_dataset_direct<Container, Sub<Pixel>>(training_limit, test_limit);
 }
 
