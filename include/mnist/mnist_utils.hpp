@@ -73,7 +73,7 @@ void normalize_each(Container& values) {
             v -= m;
         }
         //unit variance
-        auto s = stddev(vec, 0.0);
+        auto s = mnist::stddev(vec, 0.0);
         for (auto& v : vec) {
             v /= s;
         }
@@ -86,8 +86,8 @@ void normalize_each(Container& values) {
  */
 template <typename Dataset>
 void binarize_dataset(Dataset& dataset) {
-    binarize_each(dataset.training_images);
-    binarize_each(dataset.test_images);
+    mnist::binarize_each(dataset.training_images);
+    mnist::binarize_each(dataset.test_images);
 }
 
 /*!
@@ -96,8 +96,8 @@ void binarize_dataset(Dataset& dataset) {
  */
 template <typename Dataset>
 void normalize_dataset(Dataset& dataset) {
-    normalize_each(dataset.training_images);
-    normalize_each(dataset.test_images);
+    mnist::normalize_each(dataset.training_images);
+    mnist::normalize_each(dataset.test_images);
 }
 
 } //end of namespace mnist
