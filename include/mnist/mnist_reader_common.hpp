@@ -74,7 +74,7 @@ inline std::unique_ptr<char[]> read_mnist_file(const std::string& path, uint32_t
         }
     }
 
-    return std::move(buffer);
+    return buffer;
 }
 
 } //end of namespace mnist
