@@ -106,7 +106,7 @@ void read_mnist_image_file(Container<Image>& images, const std::string& path, st
 
 /*!
  * \brief Read a MNIST label file inside the given container
- * \param images The container to fill with the labels
+ * \param labels The container to fill with the labels
  * \param path The path to the label file
  * \param limit The maximum number of elements to read (0: no limit)
  */
