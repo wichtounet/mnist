@@ -67,6 +67,43 @@ struct MNIST_dataset {
 };
 
 /*!
+ * \brief Read a MNIST image file inside the given flat container (ETL)
+ * \param images The container to fill with the images
+ * \param path The path to the image file
+ * \param limit The maximum number of elements to read (0: no limit)
+ * \param func The functor to create the image object
+ */
+template <typename Container>
+bool read_mnist_image_file_flat(Container& images, const std::string& path, std::size_t limit) {
+    auto buffer = read_mnist_file(path, 0x803);
+
+    if (buffer) {
+        auto count   = read_header(buffer, 1);
+        auto rows    = read_header(buffer, 2);
+        auto columns = read_header(buffer, 3);
+
+        //Skip the header
+        //Cast to unsigned char is necessary cause signedness of char is
+        //platform-specific
+        auto image_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 16);
+
+        if (limit > 0 && count > limit) {
+            count = limit;
+        }
+
+        for (size_t i = 0; i < count; ++i) {
+            for (size_t j = 0; j < rows * columns; ++j) {
+                images(i)[j] = *image_buffer++;
+            }
+        }
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*!
  * \brief Read a MNIST image file inside the given container
  * \param images The container to fill with the images
  * \param path The path to the image file
@@ -132,6 +169,70 @@ void read_mnist_label_file(Container<Label>& labels, const std::string& path, st
             auto label = *label_buffer++;
             labels[i]  = static_cast<Label>(label);
         }
+    }
+}
+
+/*!
+ * \brief Read a MNIST label file inside the given flat container (ETL).
+ * \param labels The container to fill with the labels
+ * \param path The path to the label file
+ * \param limit The maximum number of elements to read (0: no limit)
+ */
+template <typename Container>
+bool read_mnist_label_file_flat(Container& labels, const std::string& path, std::size_t limit = 0) {
+    auto buffer = read_mnist_file(path, 0x801);
+
+    if (buffer) {
+        auto count = read_header(buffer, 1);
+
+        //Skip the header
+        //Cast to unsigned char is necessary cause signedness of char is
+        //platform-specific
+        auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
+
+        if (limit > 0 && count > limit) {
+            count = limit;
+        }
+
+        for (size_t i = 0; i < count; ++i) {
+            labels(i)  = *label_buffer++;
+        }
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*!
+ * \brief Read a MNIST label file inside the given flat categorical container (ETL).
+ * \param labels The container to fill with the labels
+ * \param path The path to the label file
+ * \param limit The maximum number of elements to read (0: no limit)
+ */
+template <typename Container>
+bool read_mnist_label_file_categorical(Container& labels, const std::string& path, std::size_t limit = 0) {
+    auto buffer = read_mnist_file(path, 0x801);
+
+    if (buffer) {
+        auto count = read_header(buffer, 1);
+
+        //Skip the header
+        //Cast to unsigned char is necessary cause signedness of char is
+        //platform-specific
+        auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
+
+        if (limit > 0 && count > limit) {
+            count = limit;
+        }
+
+        for (size_t i = 0; i < count; ++i) {
+            labels(i)(static_cast<size_t>(*label_buffer++)) = 1;
+        }
+
+        return true;
+    } else {
+        return false;
     }
 }
 
