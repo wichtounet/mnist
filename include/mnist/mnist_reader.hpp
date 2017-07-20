@@ -71,10 +71,11 @@ struct MNIST_dataset {
  * \param images The container to fill with the images
  * \param path The path to the image file
  * \param limit The maximum number of elements to read (0: no limit)
+ * \param start The elements to ignore at the beginning
  * \param func The functor to create the image object
  */
 template <typename Container>
-bool read_mnist_image_file_flat(Container& images, const std::string& path, std::size_t limit) {
+bool read_mnist_image_file_flat(Container& images, const std::string& path, std::size_t limit, std::size_t start = 0) {
     auto buffer = read_mnist_file(path, 0x803);
 
     if (buffer) {
@@ -90,6 +91,9 @@ bool read_mnist_image_file_flat(Container& images, const std::string& path, std:
         if (limit > 0 && count > limit) {
             count = limit;
         }
+
+        // Ignore "start" first elements
+        image_buffer += start * (rows * columns);
 
         for (size_t i = 0; i < count; ++i) {
             for (size_t j = 0; j < rows * columns; ++j) {
@@ -209,9 +213,10 @@ bool read_mnist_label_file_flat(Container& labels, const std::string& path, std:
  * \param labels The container to fill with the labels
  * \param path The path to the label file
  * \param limit The maximum number of elements to read (0: no limit)
+ * \param start The elements to avoid at the beginning
  */
 template <typename Container>
-bool read_mnist_label_file_categorical(Container& labels, const std::string& path, std::size_t limit = 0) {
+bool read_mnist_label_file_categorical(Container& labels, const std::string& path, std::size_t limit = 0, std::size_t start = 0) {
     auto buffer = read_mnist_file(path, 0x801);
 
     if (buffer) {
@@ -225,6 +230,9 @@ bool read_mnist_label_file_categorical(Container& labels, const std::string& pat
         if (limit > 0 && count > limit) {
             count = limit;
         }
+
+        // Ignore "start" first elements
+        label_buffer += start;
 
         for (size_t i = 0; i < count; ++i) {
             labels(i)(static_cast<size_t>(*label_buffer++)) = 1;
