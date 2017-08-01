@@ -24,14 +24,13 @@
 #include <iostream>
 #include "mnist/mnist_reader.hpp"
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     // MNIST_DATA_LOCATION set by MNIST cmake config
     std::cout << "MNIST data directory: " << MNIST_DATA_LOCATION << std::endl;
 
     // Load MNIST data
     mnist::MNIST_dataset<std::vector, std::vector<uint8_t>, uint8_t> dataSet =
-            mnist::read_dataset<std::vector, std::vector, uint8_t, uint8_t>(MNIST_DATA_LOCATION);
+        mnist::read_dataset<std::vector, std::vector, uint8_t, uint8_t>(MNIST_DATA_LOCATION);
 
     std::cout << "Nbr of training images = " << dataSet.training_images.size() << std::endl;
     std::cout << "Nbr of training labels = " << dataSet.training_labels.size() << std::endl;
