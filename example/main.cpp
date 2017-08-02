@@ -13,13 +13,13 @@ int main(int argc, char* argv[]) {
     std::cout << "MNIST data directory: " << MNIST_DATA_LOCATION << std::endl;
 
     // Load MNIST data
-    mnist::MNIST_dataset<std::vector, std::vector<uint8_t>, uint8_t> dataSet =
+    mnist::MNIST_dataset<std::vector, std::vector<uint8_t>, uint8_t> dataset =
         mnist::read_dataset<std::vector, std::vector, uint8_t, uint8_t>(MNIST_DATA_LOCATION);
 
-    std::cout << "Nbr of training images = " << dataSet.training_images.size() << std::endl;
-    std::cout << "Nbr of training labels = " << dataSet.training_labels.size() << std::endl;
-    std::cout << "Nbr of test images = " << dataSet.test_images.size() << std::endl;
-    std::cout << "Nbr of test labels = " << dataSet.test_labels.size() << std::endl;
+    std::cout << "Nbr of training images = " << dataset.training_images.size() << std::endl;
+    std::cout << "Nbr of training labels = " << dataset.training_labels.size() << std::endl;
+    std::cout << "Nbr of test images = " << dataset.test_images.size() << std::endl;
+    std::cout << "Nbr of test labels = " << dataset.test_labels.size() << std::endl;
 
     return 0;
 }
