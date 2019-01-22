@@ -89,7 +89,7 @@ bool read_mnist_image_file_flat(Container& images, const std::string& path, std:
         auto image_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 16);
 
         if (limit > 0 && count > limit) {
-            count = limit;
+            count = static_cast<unsigned int>(limit);
         }
 
         // Ignore "start" first elements
@@ -129,7 +129,7 @@ void read_mnist_image_file(Container<Image>& images, const std::string& path, st
         auto image_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 16);
 
         if (limit > 0 && count > limit) {
-            count = limit;
+            count = static_cast<unsigned int>(limit);
         }
 
         images.reserve(count);
@@ -164,7 +164,7 @@ void read_mnist_label_file(Container<Label>& labels, const std::string& path, st
         auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
 
         if (limit > 0 && count > limit) {
-            count = limit;
+            count = static_cast<unsigned int>(limit);
         }
 
         labels.resize(count);
@@ -195,7 +195,7 @@ bool read_mnist_label_file_flat(Container& labels, const std::string& path, std:
         auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
 
         if (limit > 0 && count > limit) {
-            count = limit;
+            count = static_cast<unsigned int>(limit);
         }
 
         for (size_t i = 0; i < count; ++i) {
@@ -228,7 +228,7 @@ bool read_mnist_label_file_categorical(Container& labels, const std::string& pat
         auto label_buffer = reinterpret_cast<unsigned char*>(buffer.get() + 8);
 
         if (limit > 0 && count > limit) {
-            count = limit;
+            count = static_cast<unsigned int>(limit);
         }
 
         // Ignore "start" first elements
