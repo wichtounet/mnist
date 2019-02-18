@@ -139,7 +139,7 @@ std::vector<std::vector<Pixel>> read_test_images() {
  */
 template <typename Label = uint8_t>
 std::vector<Label> read_training_labels() {
-    return read_mnist_label_file<std::vector>("mnist/train-labels-idx1-ubyte");
+    return read_mnist_label_file<Label>("mnist/train-labels-idx1-ubyte");
 }
 
 /*!
@@ -151,7 +151,7 @@ std::vector<Label> read_training_labels() {
  */
 template <typename Label = uint8_t>
 std::vector<Label> read_test_labels() {
-    return read_mnist_label_file<std::vector>("mnist/t10k-labels-idx1-ubyte");
+    return read_mnist_label_file<Label>("mnist/t10k-labels-idx1-ubyte");
 }
 
 /*!
