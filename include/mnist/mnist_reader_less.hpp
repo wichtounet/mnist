@@ -113,9 +113,9 @@ std::vector<Label> read_mnist_label_file(const std::string& path) {
  *
  * \return Container filled with the images
  */
-template <typename Pixel = uint8_t, typename Label = uint8_t>
+template <typename Pixel = uint8_t>
 std::vector<std::vector<Pixel>> read_training_images() {
-    return read_mnist_image_file<std::vector, std::vector, Pixel>("mnist/train-images-idx3-ubyte");
+    return read_mnist_image_file<Pixel>("mnist/train-images-idx3-ubyte");
 }
 
 /*!
@@ -125,9 +125,9 @@ std::vector<std::vector<Pixel>> read_training_images() {
  *
  * \return Container filled with the images
  */
-template <typename Pixel = uint8_t, typename Label = uint8_t>
+template <typename Pixel = uint8_t>
 std::vector<std::vector<Pixel>> read_test_images() {
-    return read_mnist_image_file<std::vector, std::vector, Pixel>("mnist/t10k-images-idx3-ubyte");
+    return read_mnist_image_file<Pixel>("mnist/t10k-images-idx3-ubyte");
 }
 
 /*!
